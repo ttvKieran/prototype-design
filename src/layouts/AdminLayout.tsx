@@ -1,17 +1,18 @@
-import { ArrowLeft, BarChart3, FileWarning, LogOut, Settings2 } from 'lucide-react'
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { BarChart3, FileWarning, LogOut, Settings2, Users } from 'lucide-react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Button } from '../components/common/Button'
 import { useAppState } from '../hooks/useAppState'
 
 const items = [
   { to: '/admin', label: 'Dashboard', icon: BarChart3, end: true },
   { to: '/admin/reports', label: 'Báo cáo', icon: FileWarning },
+  { to: '/admin/users', label: 'Người dùng', icon: Users },
   { to: '/admin/config', label: 'Cấu hình', icon: Settings2 },
 ]
 
 export function AdminLayout() {
   const navigate = useNavigate()
-  const { profile, logout } = useAppState()
+  const { logout } = useAppState()
 
   return (
     <div className="grid min-h-screen gap-6 lg:grid-cols-[280px,1fr]">
@@ -44,15 +45,6 @@ export function AdminLayout() {
             <h2 className="text-2xl font-bold text-ink">Bảng điều phối hệ thống</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/" className="hidden md:block">
-              <Button variant="secondary" className="h-11 px-4">
-                <ArrowLeft size={16} className="mr-2" />
-                Về trang user
-              </Button>
-            </Link>
-            <div className="hidden rounded-2xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700 md:block">
-              {profile?.fullName ?? 'Admin'} • Chế độ demo
-            </div>
             <Button
               variant="secondary"
               className="h-11 px-4"

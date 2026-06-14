@@ -17,6 +17,7 @@ const users: UserSummary[] = [
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
     reputation: 92,
     role: 'citizen',
+    isLocked: false,
   },
   {
     id: 'u-2',
@@ -24,6 +25,7 @@ const users: UserSummary[] = [
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
     reputation: 81,
     role: 'volunteer',
+    isLocked: false,
   },
   {
     id: 'u-3',
@@ -31,8 +33,11 @@ const users: UserSummary[] = [
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80',
     reputation: 88,
     role: 'admin',
+    isLocked: false,
   },
 ]
+
+export const usersSeed = users
 
 export const demoUserProfile: UserProfile = {
   id: 'u-1',
@@ -47,6 +52,7 @@ export const demoUserProfile: UserProfile = {
   verifiedReports: 26,
   rejectedReports: 3,
   role: 'citizen',
+  isLocked: false,
 }
 
 export const demoAdminProfile: UserProfile = {
@@ -62,6 +68,7 @@ export const demoAdminProfile: UserProfile = {
   verifiedReports: 12,
   rejectedReports: 0,
   role: 'admin',
+  isLocked: false,
 }
 
 export const floodPointsSeed: FloodPoint[] = [

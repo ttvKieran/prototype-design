@@ -13,8 +13,9 @@ import {
   reportsSeed,
   safeRoutesSeed,
   systemConfigLogsSeed,
+  usersSeed,
 } from '../data/mockData'
-import type { FloodPoint, FloodReport, FloodSeverity, SystemConfig, SystemConfigLog, UserProfile } from '../types'
+import type { FloodPoint, FloodReport, FloodSeverity, SystemConfig, SystemConfigLog, UserProfile, UserSummary } from '../types'
 
 interface NewReportInput {
   name?: string
@@ -31,13 +32,15 @@ interface AppStateValue {
   floodPoints: FloodPoint[]
   reports: FloodReport[]
   safeRoutes: typeof safeRoutesSeed
+  users: UserSummary[]
   profile: UserProfile | null
   isAuthenticated: boolean
   isAdmin: boolean
   systemConfig: SystemConfig
   systemConfigLogs: SystemConfigLog[]
-  login: (role: 'citizen' | 'admin') => void
+  login: (email: string) => { success: boolean; role?: 'citizen' | 'admin'; reason?: string }
   logout: () => void
+  toggleUserLock: (id: string) => void
   submitReport: (input: NewReportInput) => string
   confirmFloodPoint: (id: string) => void
   resolveFloodPoint: (id: string) => void
@@ -53,14 +56,41 @@ export function AppStateProvider({ children }: PropsWithChildren) {
   const [reports, setReports] = useState(reportsSeed)
   const [systemConfig, setSystemConfig] = useState(initialSystemConfig)
   const [systemConfigLogs, setSystemConfigLogs] = useState(systemConfigLogsSeed)
+  const [users, setUsers] = useState(usersSeed)
   const [profile, setProfile] = useState<UserProfile | null>(null)
 
-  const login = (role: 'citizen' | 'admin') => {
-    setProfile(role === 'admin' ? demoAdminProfile : demoUserProfile)
+  const login = (email: string) => {
+    const normalizedEmail = email.trim().toLowerCase()
+    const targetProfile =
+      normalizedEmail === demoAdminProfile.email.toLowerCase()
+        ? demoAdminProfile
+        : normalizedEmail === demoUserProfile.email.toLowerCase()
+          ? demoUserProfile
+          : demoUserProfile
+    const userState = users.find((user) => user.id === targetProfile.id)
+
+    if (userState?.isLocked) {
+      return { success: false, reason: 'Tài khoản này đang bị khóa' }
+    }
+
+    setProfile({
+      ...targetProfile,
+      isLocked: userState?.isLocked ?? targetProfile.isLocked,
+    })
+    return { success: true, role: targetProfile.role }
   }
 
   const logout = () => {
     setProfile(null)
+  }
+
+  const toggleUserLock = (id: string) => {
+    setUsers((prev) => prev.map((user) => (user.id === id ? { ...user, isLocked: !user.isLocked } : user)))
+
+    setProfile((prev) => {
+      if (!prev || prev.id !== id) return prev
+      return { ...prev, isLocked: !prev.isLocked }
+    })
   }
 
   const submitReport = (input: NewReportInput) => {
@@ -104,6 +134,7 @@ export function AppStateProvider({ children }: PropsWithChildren) {
         avatar: activeProfile.avatar,
         reputation: activeProfile.reputation,
         role: 'citizen',
+        isLocked: false,
       },
       nearbyLandmark: 'Vị trí do người dùng chọn',
       updates: [
@@ -202,6 +233,7 @@ export function AppStateProvider({ children }: PropsWithChildren) {
     floodPoints,
     reports,
     safeRoutes: safeRoutesSeed,
+    users,
     profile,
     isAuthenticated: Boolean(profile),
     isAdmin: profile?.role === 'admin',
@@ -209,6 +241,7 @@ export function AppStateProvider({ children }: PropsWithChildren) {
     systemConfigLogs,
     login,
     logout,
+    toggleUserLock,
     submitReport,
     confirmFloodPoint,
     resolveFloodPoint,

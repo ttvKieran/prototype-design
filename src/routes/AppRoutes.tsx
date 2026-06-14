@@ -4,6 +4,7 @@ import { AdminLayout } from '../layouts/AdminLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage'
 import { AdminReportsPage } from '../pages/admin/AdminReportsPage'
+import { AdminUsersPage } from '../pages/admin/AdminUsersPage'
 import { SystemConfigPage } from '../pages/admin/SystemConfigPage'
 import { AuthPage } from '../pages/AuthPage'
 import { FloodMapPage } from '../pages/FloodMapPage'
@@ -56,6 +57,7 @@ export function AppRoutes() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
           <Route path="config" element={<SystemConfigPage />} />
         </Route>
       </Route>

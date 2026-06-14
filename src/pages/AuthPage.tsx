@@ -10,17 +10,20 @@ export function AuthPage() {
   const navigate = useNavigate()
   const { login } = useAppState()
   const [loading, setLoading] = useState(false)
-  const [role, setRole] = useState<'citizen' | 'admin'>('citizen')
   const [email, setEmail] = useState('minhanh.hn@safecomm.vn')
   const [password, setPassword] = useState('demo123')
 
   const handleLogin = () => {
     setLoading(true)
     window.setTimeout(() => {
-      login(role)
+      const result = login(email)
       setLoading(false)
-      toast.success(`Đăng nhập ${role === 'admin' ? 'admin' : 'người dùng'} thành công`)
-      navigate(role === 'admin' ? '/admin' : '/', { replace: true })
+      if (!result.success) {
+        toast.error(result.reason ?? 'Đăng nhập thất bại')
+        return
+      }
+      toast.success(`Đăng nhập ${result.role === 'admin' ? 'admin' : 'người dùng'} thành công`)
+      navigate(result.role === 'admin' ? '/admin' : '/', { replace: true })
     }, 900)
   }
 
@@ -30,7 +33,7 @@ export function AuthPage() {
         <p className="text-sm uppercase tracking-[0.32em] text-brand-200">Secure Access</p>
         <h1 className="mt-4 text-4xl font-bold">Đăng nhập để gửi báo cáo và theo dõi uy tín cá nhân.</h1>
         <p className="mt-4 text-slate-300">
-          Chọn đúng vai trò để điều hướng tới khu vực tương ứng sau đăng nhập. User về trang chủ hệ thống, admin vào thẳng dashboard quản trị.
+          Hệ thống tự nhận diện vai trò theo tài khoản đăng nhập. User sẽ vào khu vực người dùng, admin sẽ vào dashboard quản trị.
         </p>
         <div className="mt-6 space-y-3 text-sm text-slate-300">
           <div>Tài khoản user: `minhanh.hn@safecomm.vn` / `demo123`</div>
@@ -45,22 +48,6 @@ export function AuthPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-600">Vai trò</label>
-              <select
-                className="field"
-                value={role}
-                onChange={(e) => {
-                  const nextRole = e.target.value as 'citizen' | 'admin'
-                  setRole(nextRole)
-                  setEmail(nextRole === 'admin' ? 'admin@safecomm.vn' : 'minhanh.hn@safecomm.vn')
-                  setPassword(nextRole === 'admin' ? 'admin123' : 'demo123')
-                }}
-              >
-                <option value="citizen">Người dùng</option>
-                <option value="admin">Quản trị viên</option>
-              </select>
-            </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-600">Email</label>
               <div className="relative">

@@ -15,6 +15,7 @@ export interface UserSummary {
   avatar: string
   reputation: number
   role: 'citizen' | 'volunteer' | 'admin'
+  isLocked: boolean
 }
 
 export interface FloodReport {
@@ -79,6 +80,7 @@ export interface UserProfile {
   verifiedReports: number
   rejectedReports: number
   role: 'citizen' | 'admin'
+  isLocked: boolean
 }
 
 export interface DailyReportStat {
