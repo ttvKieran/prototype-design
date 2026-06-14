@@ -1,5 +1,6 @@
 import { Activity, BadgeCheck, Lock, Search, ShieldCheck, Unlock, UserRound } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '../../components/common/Button'
 import { useAppState } from '../../hooks/useAppState'
@@ -102,17 +103,17 @@ export function AdminUsersPage() {
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="border-t border-slate-100">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
+                    <Link to={`/admin/users/${user.id}`} className="flex items-center gap-3">
                       <img
                         src={user.avatar}
                         alt={user.name}
                         className="h-11 w-11 rounded-full object-cover"
                       />
                       <div>
-                        <div className="font-semibold text-ink">{user.name}</div>
-                        <div className="text-xs text-slate-500">ID: {user.id}</div>
+                        <div className="font-semibold text-ink hover:text-brand-700">{user.name}</div>
+                        <div className="text-xs text-slate-500">ID: {user.id} • Xem chi tiết</div>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4 capitalize text-slate-700">{user.role}</td>
                   <td className="px-6 py-4 font-semibold text-ink">{user.reputation}/100</td>
@@ -137,30 +138,37 @@ export function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <Button
-                      variant={user.isLocked ? 'secondary' : 'danger'}
-                      className="h-10 px-4 text-xs"
-                      onClick={() => {
-                        toggleUserLock(user.id)
-                        toast.success(
-                          user.isLocked
-                            ? `Đã mở khóa tài khoản ${user.name}`
-                            : `Đã khóa tài khoản ${user.name}`,
-                        )
-                      }}
-                    >
-                      {user.isLocked ? (
-                        <>
-                          <Unlock size={14} className="mr-2" />
-                          Mở khóa
-                        </>
-                      ) : (
-                        <>
-                          <Lock size={14} className="mr-2" />
-                          Khóa
-                        </>
-                      )}
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Link to={`/admin/users/${user.id}`}>
+                        <Button variant="secondary" className="h-10 px-4 text-xs">
+                          Xem báo cáo
+                        </Button>
+                      </Link>
+                      <Button
+                        variant={user.isLocked ? 'secondary' : 'danger'}
+                        className="h-10 px-4 text-xs"
+                        onClick={() => {
+                          toggleUserLock(user.id)
+                          toast.success(
+                            user.isLocked
+                              ? `Đã mở khóa tài khoản ${user.name}`
+                              : `Đã khóa tài khoản ${user.name}`,
+                          )
+                        }}
+                      >
+                        {user.isLocked ? (
+                          <>
+                            <Unlock size={14} className="mr-2" />
+                            Mở khóa
+                          </>
+                        ) : (
+                          <>
+                            <Lock size={14} className="mr-2" />
+                            Khóa
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
