@@ -1,11 +1,22 @@
 import { Crosshair, LocateFixed } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, useMapEvents, CircleMarker } from 'react-leaflet'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '../components/common/Button'
 import { useAppState } from '../hooks/useAppState'
 import type { FloodSeverity } from '../types'
+
+interface ReportPrefillState {
+  prefill?: {
+    address: string
+    lat: number
+    lng: number
+    severity?: FloodSeverity
+    description?: string
+    image?: string
+  }
+}
 
 function MapSelector({
   position,
@@ -25,7 +36,9 @@ function MapSelector({
 
 export function ReportFloodPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { submitReport } = useAppState()
+  const routeState = location.state as ReportPrefillState | null
   const [severity, setSeverity] = useState<FloodSeverity>('medium')
   const [position, setPosition] = useState<[number, number]>([21.0278, 105.8342])
   const [showGpsPrompt, setShowGpsPrompt] = useState(false)
@@ -35,6 +48,19 @@ export function ReportFloodPage() {
     address: 'Phố Hàng Bài, Hoàn Kiếm',
     description: '',
   })
+
+  useEffect(() => {
+    const prefill = routeState?.prefill
+    if (!prefill) return
+
+    setPosition([prefill.lat, prefill.lng])
+    setSeverity(prefill.severity ?? 'medium')
+    setImage(prefill.image || 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1000&q=80')
+    setForm({
+      address: prefill.address,
+      description: prefill.description || '',
+    })
+  }, [routeState])
 
   const confirmGps = () => {
     setShowGpsPrompt(false)
